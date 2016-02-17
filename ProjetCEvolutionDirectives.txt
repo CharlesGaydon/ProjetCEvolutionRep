@@ -1,0 +1,41 @@
+Projet de Programmation en C++ : 
+Algorithme évolutionnaire.
+
+charles.rocabert@inria.fr
+
+Parties à faire :
+Obligatoire : 5.1 5.2 5.3 
+Bonus : 6
+
+Diagramme de phase : représente les lieux des changements de phase 
+(cohabitation, exclusion, extinction) de la population pour differentes 
+paramètres.
+
+Résolution des equa diff : par Euler explicite d'ordre 1.
+A(t+1) = A(t) + dA/dt * dt 
+Dix fois pour un pas de temps si on prend un dt de 0.1.
+
+Mutation a lieu après division, indépendamment chez chaque cellule fille.
+Une cellule ne peut se diviser qu'une seule fois par pas de temps.
+Argument candivide a repasser a 1 a chaque fin de tour, passé a 0 après division
+
+Map remplie de cellules aux métabolismes vides au départ. Un update 
+puis la fitness entre en jeu.
+
+Considérons qu'une cellule peut se diviser plusieurs fois, pour plus
+de simplicité.
+
+Pour Simulation, accéder aux valeurs stables a l'aide d'un fichier texte modifiable aisément 
+et dont les valeurs seront lues à l'initialisation et à chaque fin de cycle: 
+	Pmut = 0.1;
+	Pdeath = 0.001;
+		
+	Raa = 0.1;
+	Rbb = 0.1;
+	Rab = 0.1;
+	Rbc = 0.1;
+		
+		
+	Wmin = 0.001;
+	Tfini = 10000;
+

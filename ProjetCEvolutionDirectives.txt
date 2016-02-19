@@ -39,3 +39,9 @@ et dont les valeurs seront lues à l'initialisation et à chaque fin de cycle:
 	Wmin = 0.001;
 	Tfini = 10000;
 
+19 fevrier : Individu et Environnement testés.
+TODO : destructeur Simulation.
+diffusion et la tester. (Environnement)
+Empecher certains constructeurs par défaut (tous, en fait !)
+Gérer la mort des individus à chaque tour (Simulation)
+

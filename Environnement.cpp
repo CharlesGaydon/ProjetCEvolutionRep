@@ -1,4 +1,4 @@
-
+#include <iostream>
 #include "Environnement.h"
 
 Environnement::Environnement () {
@@ -6,7 +6,13 @@ Environnement::Environnement () {
 	H = 0;
 	D = 0;
 	
-	res = nullptr;
+	resA = nullptr;
+	resB = nullptr;
+	resC = nullptr;
+
+	NresA = nullptr;
+	NresB = nullptr;
+	NresC = nullptr;
 	
 }
 
@@ -17,22 +23,35 @@ Environnement::Environnement (unsigned int nW, unsigned int nH, double nAinit) {
 	D = 0.1;
 	Ainit = nAinit;
 	
-	res = new double**[W];
+	//Ressources
 	
-	for (int i = 0 ; i< W ; i++){
+	resA = new double*[W];
+	resB = new double*[W];
+	resC = new double*[W];
+
+	NresA = new double*[W];
+	NresB = new double*[W];
+	NresC = new double*[W];
+	
+	for (unsigned int i = 0 ; i< W ; i++){	
 		
-		res[i] = new double*[H];
+		resA[i] = new double[H];
+		resB[i] = new double[H];
+		resC[i] = new double[H];
 		
-		for (int j = 0 ; j<H ; j++){
+		NresA[i] = new double[H];
+		NresB[i] = new double[H];
+		NresC[i] = new double[H];
+		
+		for (unsigned int j = 0 ; j<H ; j++){			
+			resA[i][j] = Ainit;	
+			resB[i][j] = 0;	
+			resC[i][j] = 0;
 			
-			res[i][j] = new double[3];
-			res[i][j][0] = Ainit;
-			
-			for (int k = 1 ; k<3 ; k++){
-				res[i][j][k] = 0;
-			}
-			
-		}
+			NresA[i][j] = Ainit;	
+			NresB[i][j] = 0;	
+			NresC[i][j] = 0;			
+		}	
 		
 	}
 
@@ -45,22 +64,35 @@ Environnement::Environnement (unsigned int nW, unsigned int nH, double nAinit, d
 	D = nD;
 	Ainit = nAinit;
 	
-	res = new double**[W];
+	//Ressources
 	
-	for (int i = 0 ; i< W ; i++){
+	resA = new double*[W];
+	resB = new double*[W];
+	resC = new double*[W];
+
+	NresA = new double*[W];
+	NresB = new double*[W];
+	NresC = new double*[W];
+	
+	for (unsigned int i = 0 ; i< W ; i++){	
 		
-		res[i] = new double*[H];
+		resA[i] = new double[H];
+		resB[i] = new double[H];
+		resC[i] = new double[H];
 		
-		for (int j = 0 ; j<H ; j++){
+		NresA[i] = new double[H];
+		NresB[i] = new double[H];
+		NresC[i] = new double[H];
+		
+		for (unsigned int j = 0 ; j<H ; j++){			
+			resA[i][j] = Ainit;	
+			resB[i][j] = 0;	
+			resC[i][j] = 0;
 			
-			res[i][j] = new double[3];
-			res[i][j][0] = Ainit;
-			
-			for (int k = 1 ; k<3 ; k++){
-				res[i][j][k] = 0;
-			}
-			
-		}
+			NresA[i][j] = Ainit;	
+			NresB[i][j] = 0;	
+			NresC[i][j] = 0;			
+		}	
 		
 	}
 	
@@ -68,24 +100,22 @@ Environnement::Environnement (unsigned int nW, unsigned int nH, double nAinit, d
 
 Environnement::~Environnement (){
 	
-	for (int i = 0 ; i< W ; i++){
-
-		for (int j = 0 ; j<H ; j++){
-			for (int k = 1 ; k<3 ; k++){
-				delete[] res[i][j];
-			}
-			delete[] res[i];		
-				
-		}		
-		delete[] res;
-	}
+	for (int i = 0 ; i< W ; i++){	
+		delete[] resA[i];
+		delete[] resB[i];
+		delete[] resC[i];
+		
+		delete[] NresA[i];
+		delete[] NresB[i];
+		delete[] NresC[i];				
+	}		
+	delete[] resA;
+	delete[] resB;
+	delete[] resC;
 	
+	delete[] NresA;
+	delete[] NresB;
+	delete[] NresC;
 }
-
-
-
-
-
-
 
 

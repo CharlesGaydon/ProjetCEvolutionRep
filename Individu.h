@@ -8,7 +8,7 @@ class Individu {
 		
 		//constructeurs
 		
-		Individu (void);
+
 		Individu (unsigned int nx, unsigned int ny, bool ngen);
 		Individu (const Individu& model);
 		
@@ -41,6 +41,8 @@ class Individu {
 		double fitness;
 		unsigned int x;
 		unsigned int y;
+	private :
+		Individu (void);
 	
 };
 

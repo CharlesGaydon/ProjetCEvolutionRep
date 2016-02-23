@@ -65,11 +65,12 @@ Individu::~Individu (){
 	
 }
 
+//TODO delete
 void Individu::actfitness (){
 	if (gen){
-		fitness = phen[0];
+		fitness = phen[2];
 	}else{
 		fitness = phen[1];
 	}
-	;
+	
 }

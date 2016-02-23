@@ -22,11 +22,13 @@ class Simulation {
 		void GuerreSexuelle ();
 		void Mutation ();
 		void Metabolisme ();
+		void MAJfitness ();
 		
 		//méthodes auxiliaires
 		void JeContinue (int nbCycle);
 		int* Situation ();
-		void Afficher ();		
+		void Afficher ();	
+		void MAJparametres ();	
 		
 		
 	protected:
@@ -51,7 +53,7 @@ class Simulation {
 		double Rab;
 		double Rbc;		
 		double Wmin;
-		double Tfini;
+		double Tfini; //nb de tours total
 		//end
 
 	private:

@@ -4,6 +4,7 @@
 
 //Conctructeurs
 Environnement::Environnement () {
+	
 	//Déclaré privé pour empêcher son usage.
 	
 	//~ W = 0;
@@ -125,7 +126,9 @@ Environnement::~Environnement (){
 	
 }
 
+
 //Méthodes de la simulation
+
 
 void Environnement::Diffusion (){
 	int x = 0;
@@ -158,17 +161,31 @@ void Environnement::Diffusion (){
 	}
 }
 
+void Environnement::clean (){
+	
+	for(unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			resA[i][j] = Ainit;
+			resB[i][j] = 0;
+			resC[i][j] = 0;
+		}
+	}
+	
+}
+
+
 //Méthodes auxilaires
 
-//Méthodes auxiliaires
 
 void Environnement::AfficherA (){
+
 	for (unsigned int j = 0 ; j<H ; j++){
 		for (unsigned int i = 0 ; i<W ; i++){
 			std::cout << resA[i][j] << " ";
 		}
 		std::cout << "" << std::endl;
-	}	
+	}
+
 }
 
 

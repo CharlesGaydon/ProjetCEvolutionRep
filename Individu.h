@@ -37,8 +37,10 @@ class Individu {
 		inline void setC (double nC);
 		inline void setDeadOrAlive (bool state);
 		inline void setgen (bool ngen);
+		inline void setfitness (double nfit);
+		
 		//Actualisation
-		void actfitness (void);
+		void actfitness (void);//TODO delete
 		
 	protected :
 	
@@ -103,5 +105,9 @@ inline void Individu::setDeadOrAlive (bool state){
 
 inline void Individu::setgen (bool ngen){
 	gen = ngen;
+}
+
+inline void Individu::setfitness (double nfit){
+	fitness = nfit;
 }
 #endif //INDIVIDU_H_

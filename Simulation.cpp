@@ -27,40 +27,28 @@ Simulation::Simulation (){
 	
 }
 
-//:param nT: nombre de tours avant changement de milieu.
+//:param nT: nombre de tours avant changement de milieu : 
+//durée de la simulation
 Simulation::Simulation (unsigned int nW, unsigned int nH, 
 						double nT, double nAinit){
 							
-	T = nT;
+	T = nT; 
 	Ainit = nAinit;
 	D = 0.1;
 	W = nW;
 	H = nH;
 	
-	//TODO : Lecture des paramètres dans cet ordre :
-	//fonction importParam
-
-	Pmut = 0.1;
-	Pdeath = 0.001;
-		
-	Raa = 0.1;
-	Rbb = 0.1;
-	Rab = 0.1;
-	Rbc = 0.1;	
-		
-	Wmin = 0.001;
-	Tfini = 10000;
-	poursuivre = 1;
+	this->MAJparametres ();
+	
 	//Environnement :
 	MAP = new Environnement(W, H, Ainit);
 	
-	//Tableau de population, rempli de 50% de chaque génotype.
+	//Tableau de population, rempli de B, puis de 50% de A.
 	pop = new Individu**[W];
 	
 	int nbA = 0;
 	int max = (W*H)/2;
 	
-	//Remplissage de B, puis de 50% de A
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
 		for (unsigned int j = 0 ; j<H ; j++){
@@ -80,7 +68,8 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	}
 	
 }
-//a copier sur l'autre!!
+
+
 Simulation::Simulation (unsigned int nW, unsigned int nH, 
 						double nT, double nAinit, double nD){
 	T = nT;
@@ -89,29 +78,17 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	W = nW;
 	H = nH;
 	
-	//TODO : Lecture des paramètres
+	this->MAJparametres ();
 	
-	Pmut = 0.1;
-	Pdeath = 0.001;
-		
-	Raa = 0.1;
-	Rbb = 0.1;
-	Rab = 0.1;
-	Rbc = 0.1;	
-		
-	Wmin = 0.001;
-	Tfini = 10000;
-	poursuivre = 1;
 	//Environnement :
 	MAP = new Environnement(W, H, Ainit, D);
 	
-	//Tableau de population, rempli de 50% de chaque génotype.
+	//Tableau de population, rempli de B, puis de 50% de A.
 	pop = new Individu**[W];
 	
 	int nbA = 0;
 	int max = (W*H)/2;
 	
-	//Remplissage de B, puis de 50% de A
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
 		for (unsigned int j = 0 ; j<H ; j++){
@@ -145,38 +122,44 @@ Simulation::~Simulation () {
 	delete MAP;
 }
 
+
 //Méthodes de simulation
 
+
 int Simulation::Simulate (){
-	int nbCycle = 0;
+	int temps = 0;
 	this->Metabolisme ();
 	//TODO : lecture du fichier texte pour paramètres
 	while (poursuivre){
-		for (unsigned int i = 0 ; i<T ; i++){
+
 			//Les métabolites externes diffusent dans l'environnement
-			MAP->Diffusion ();
+		MAP->Diffusion ();
 			//Certains individus meurent, leurs métabolites sont rejetés
 			//et ils passent de vivant à mort
-			this->Hecatombe ();
-			//COmpétition pour la reproduction. parcours aléatoire des 
+		this->Hecatombe ();
+			//Compétition pour la reproduction. parcours aléatoire des 
 			//Cases où les individus sont mort (cad vides). et compétition 
 			//entre les individus extérieurs. L'individu choisi voit ses C
 			//en métabolite divisées par deux (donc sa fitness aussi) et
 			//A l'espace vide est attribué par opérateur par copie (après 
 			//DESTRUCTION du précédent) cet individu.
 			//Après division, un individu ne peut se reproduire dans le même tour.
-			this->GuerreSexuelle ();
+		this->GuerreSexuelle ();
 			//Mutation aléatoire des organisme independemment les uns des autres.
-			this->Mutation ();			
+		this->Mutation ();			
 			//Métabolisme des individus. La FITNESS est actualisée pour tous.
-			this->Metabolisme ();
+		this->Metabolisme (); //actualiser la fitness egalement
 			//Affichage de la boîte de pétri
+
+		
+		temps++;	
+		this->JeContinue (temps);
+		if (temps%T == 0){
 			this->Afficher ();
+			//LECTURE DES PARAMèTRES.
+			MAP->clean ();
 		}
-		nbCycle++;	
-		//LECTURE DES PARAMèTRES.
-		this->JeContinue (nbCycle);
-		//clean l'environnement
+			
 	}
 }
 
@@ -189,12 +172,13 @@ void Simulation::Hecatombe (){
 		for (unsigned int j = 0 ; j<H ; j++){
 			p = pop[i][j];
 			if (p->isalive()){
-				newState = (((double) std::rand()/RAND_MAX)>=Pmut);
-				std::cout << newState << std::endl;
+				newState = (((double) std::rand()/RAND_MAX)>=Pdeath);
+				std::cout << "individu changed to : "<< newState << std::endl;
 				p->setDeadOrAlive(newState);
 			}
 		}
 	}
+	
 }
 
 void Simulation::GuerreSexuelle (){
@@ -258,10 +242,52 @@ void Simulation::Metabolisme (){
 }
 
 void Simulation::Mutation (){
-	//TODO
+	
+	bool mutate = true;
+	Individu* p = nullptr;
+	
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			
+			p = pop[i][j];
+			if (p->isalive()){
+				mutate = (((double) std::rand()/RAND_MAX)<=Pmut);
+				std::cout << "mutate : " << mutate << std::endl;
+				if (mutate){
+					if (p->getgen()){
+						p->setgen(false);
+					}else{
+						p->setgen(true);
+					}
+				}
+			}
+			
+		}
+	}
+	
 }
 
-
+void Simulation::MAJfitness (){
+	Individu* p = nullptr;
+	
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			
+			p = pop[i][j];
+			if (p->isalive ()){
+				if (p->getgen ()){
+						p->setfitness ((p->getphen())[2]);
+					}else{
+						p->setfitness ((p->getphen())[1]);
+					}
+				if (p->getfitness () < Wmin){
+					p->setfitness(0);
+				}
+			}
+			
+		}
+	}
+}
 
 //Méthodes auxiliaires
 
@@ -285,7 +311,7 @@ void Simulation::Afficher (){
 		std::cout << "" << std::endl;
 	}
 	std::cout << "L'état des ressources en A est le suivant : "<< std::endl ;
-	MAP->AfficherA (); //A ENLEVER APRES TESTS
+	MAP->AfficherA (); //TODO : ENLEVER APRES TESTS
 	
 }
 
@@ -331,20 +357,33 @@ int* Simulation::Situation (){
 }
 
 //Mise en place de conditions d'arrêt du système.
-void Simulation::JeContinue (int nbCycle){
-	int nmax = 1;
-	if (nbCycle > nmax){
-		std::cout << nmax << " tours de simulation effectués. Arrêt de la simulation" << std::endl;
+//TODO : changer nmax
+void Simulation::JeContinue (int temps){
+	if (temps > Tfini){
+		std::cout << Tfini << " temps de simulation effectués. Arrêt de la simulation. " << std::endl;
 		poursuivre = false;
 		this->Afficher();
 	}
-	
-	if ((this->Situation ())[2] != 0){
-		std::cout << "Les populations ne cohabitent plus ! Arrêt de la simulation." << std::endl;
-		poursuivre = false;
-		this->Afficher();
-	}
+	//TO DELETE
+	//~ if ((this->Situation ())[2] != 0){
+		//~ std::cout << "Les populations ne cohabitent plus ! Arrêt de la simulation." << std::endl;
+		//~ poursuivre = false;
+		//~ this->Afficher();
+	//~ }
 }
 
-
+void Simulation::MAJparametres (){
+	//TODO : import des paramètres depuis fichier texte
+	Pmut = 0.1;
+	Pdeath = 0.001;
+		
+	Raa = 0.1;
+	Rbb = 0.1;
+	Rab = 0.1;
+	Rbc = 0.1;	
+		
+	Wmin = 0.001;
+	Tfini = 10000;
+	poursuivre = true;
+}
 

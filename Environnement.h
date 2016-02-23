@@ -45,6 +45,7 @@ class Environnement {
 		
 		//méthodes	de la simulation
 		void Diffusion ();
+		void clean ();
 		
 		//méthodes auxiliaires
 		void AfficherA ();

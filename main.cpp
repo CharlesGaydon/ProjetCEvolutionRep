@@ -9,8 +9,9 @@ int main(){
 		//individu ok
 		//Environnement ok
 		//SImulation ok
-	Simulation S = Simulation(15,15,2000, 0.1);
-	S.Afficher ();
+	Simulation S = Simulation(10,10,3, 0.1);
+	S.Afficher();
+	S.Simulate ();
 	std::cout << 0
 	<< std::endl;
 	

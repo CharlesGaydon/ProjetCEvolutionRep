@@ -13,7 +13,7 @@ Simulation::Simulation (){
 	//~ T = 0;
 	//~ Ainit = 0;
 	//~ D = 0;
-	
+	//~ poursuivre = 0;
 	//~ Pmut = 0;
 	//~ Pdeath = 0;
 		
@@ -50,35 +50,37 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 		
 	Wmin = 0.001;
 	Tfini = 10000;
-	
+	poursuivre = 1;
 	//Environnement :
 	MAP = new Environnement(W, H, Ainit);
 	
 	//Tableau de population, rempli de 50% de chaque génotype.
 	pop = new Individu**[W];
 	
-	bool NewGenotype = true;
 	int nbA = 0;
-	int nbB = 0;
 	int max = (W*H)/2;
 	
+	//Remplissage de B, puis de 50% de A
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
-		
 		for (unsigned int j = 0 ; j<H ; j++){
-			NewGenotype = (((double) std::rand()/RAND_MAX)>=0.5);
-						
-			while(((nbA>max) && (NewGenotype==false)) || ((nbB>max) && NewGenotype)){
-				NewGenotype = (((double) std::rand()/RAND_MAX)>=0.5);
-			}
-
-			if (NewGenotype) {nbB++;} else {nbA++;}
-			pop[i][j] = new Individu(i,j, NewGenotype);
+			pop[i][j] = new Individu(i,j, true);
 		}
+	}
+	unsigned int i = 0;
+	unsigned int j = 0;
+	while (nbA <= max){
+			i = ((double) std::rand()/(double) RAND_MAX)*((double) (W));
+			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
+			std::cout << i << " " << j << std::endl;//ok
+			if ((pop[i][j])->getgen ()){
+				pop[i][j]->setgen(false);
+				nbA++;
+			}
 	}
 	
 }
-
+//a copier sur l'autre!!
 Simulation::Simulation (unsigned int nW, unsigned int nH, 
 						double nT, double nAinit, double nD){
 	T = nT;
@@ -99,27 +101,35 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 		
 	Wmin = 0.001;
 	Tfini = 10000;
+	poursuivre = 1;
 	//Environnement :
 	MAP = new Environnement(W, H, Ainit, D);
 	
 	//Tableau de population, rempli de 50% de chaque génotype.
 	pop = new Individu**[W];
 	
-	bool NewGenotype = false;
 	int nbA = 0;
-	int nbB = 0;
 	int max = (W*H)/2;
 	
+	//Remplissage de B, puis de 50% de A
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
-		
 		for (unsigned int j = 0 ; j<H ; j++){
-			while((nbA<=max && NewGenotype == true) || (nbB<=max && NewGenotype == false)){
-				NewGenotype = ((std::rand()/RAND_MAX)>=0.5);
-			}
-			pop[i][j] = new Individu(i,j, NewGenotype);
+			pop[i][j] = new Individu(i,j, true);
 		}
 	}
+	unsigned int i = 0;
+	unsigned int j = 0;
+	while (nbA <= max){
+			i = ((double) std::rand()/(double) RAND_MAX)*((double) (W));
+			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
+			std::cout << i << " " << j << std::endl;//ok
+			if ((pop[i][j])->getgen ()){
+				pop[i][j]->setgen(false);
+				nbA++;
+			}
+	}
+	
 }
 
 //Destructeurs
@@ -141,7 +151,7 @@ int Simulation::Simulate (){
 	int nbCycle = 0;
 	this->Metabolisme ();
 	//TODO : lecture du fichier texte pour paramètres
-	while (this->JeContinue (nbCycle)){
+	while (poursuivre){
 		for (unsigned int i = 0 ; i<T ; i++){
 			//Les métabolites externes diffusent dans l'environnement
 			MAP->Diffusion ();
@@ -164,12 +174,27 @@ int Simulation::Simulate (){
 			this->Afficher ();
 		}
 		nbCycle++;	
+		//LECTURE DES PARAMèTRES.
+		this->JeContinue (nbCycle);
 		//clean l'environnement
 	}
 }
 
 void Simulation::Hecatombe (){
-	//TODO
+	
+	bool newState = true;
+	Individu* p = nullptr;
+	
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			p = pop[i][j];
+			if (p->isalive()){
+				newState = (((double) std::rand()/RAND_MAX)>=Pmut);
+				std::cout << newState << std::endl;
+				p->setDeadOrAlive(newState);
+			}
+		}
+	}
 }
 
 void Simulation::GuerreSexuelle (){
@@ -183,28 +208,53 @@ void Simulation::Metabolisme (){
 	double Aout = 0;
 	double A = 0;
 	double Bout = 0;
-	double B;
+	double B = 0;
+	double C = 0;
 	
 	for (unsigned int i = 0 ; i<W ; i++){
 		for (unsigned int j = 0 ; j<H ; j++){
+			
 			p = pop[i][j];
+			
 			if (p->isalive ()){
+				
 				if (p->getgen ()){
+					
 					//Métabolisme B
 					for (int t = 0; t<10 ; t++){
-						Aout = MAP->getA(i,j);
-						A = ((pop[i][j])->getphen())[0];
-						MAP->setA(i, j, Aout - dt*Aout*Raa);
-						(pop[i][j])->setA
+						Bout = MAP->getB(i,j);
+						B = (p->getphen())[1];
+						C = (p->getphen())[2];
+						//Bout
+						MAP->setB(i,j,Bout - dt*Bout*Rbb);
+						//B
+						p->setB(B + dt*(Bout*Rbb - B*Rbc));
+						//C
+						p->setC(C + dt*B*Rbc);	
 					}
+					
 				}else{
+					
 					//Métabolisme A
+					for (int t = 0; t<10 ; t++){					
+						Aout = MAP->getA(i,j);
+						A = (p->getphen())[0];
+						B = (p->getphen())[1];
+						
+						//Aout
+						MAP->setA(i, j, Aout - dt*Aout*Raa);
+						//A
+						p->setA(A + dt*(Aout*Raa - A*Rab));
+						//B
+						p->setB(B + dt*A*Rab);
+					}
 					
-					
-				}
-			}			
-		}
-	}
+				} //end else
+				
+			} //end isalive
+			
+		} //end for
+	} //end for
 }
 
 void Simulation::Mutation (){
@@ -217,20 +267,30 @@ void Simulation::Mutation (){
 
 void Simulation::Afficher (){
 	
+	Individu* p = nullptr;
 	int* sit = this->Situation ();
+	
 	std::cout << "La simulation est dans l'état : " << sit[2] << " avec : "<< std::endl ;
 	std::cout << sit[0]<< " individus de phétonype A et "<< sit[1] << " individus de phétonype B." <<std::endl;
 	
 	for (unsigned int j = 0 ; j<H ; j++){
 		for (unsigned int i = 0 ; i<W ; i++){
-			std::cout << (pop[i][j])->getgen () << " ";
+			p = pop[i][j];
+			if (p->isalive()){
+				std::cout << p->getgen () << " ";
+			}else{
+				std::cout << "X" << " ";
+			}
 		}
 		std::cout << "" << std::endl;
 	}
 	std::cout << "L'état des ressources en A est le suivant : "<< std::endl ;
-	MAP->AfficherA ();
+	MAP->AfficherA (); //A ENLEVER APRES TESTS
+	
 }
-//Retourne : nb de genA, de genB, et un code pour la situation sur le plateau:
+
+
+//return : nb de genA, de genB, et un code pour la situation sur le plateau:
 // -1 : extinction ;
 // 0 : cohabitation ;
 // 1 : S (gen B) éteinte.
@@ -270,10 +330,20 @@ int* Simulation::Situation (){
 	return Sit;
 }
 
-bool Simulation::JeContinue (int nbCycle){
-	bool cont = false;
-	//TODO
-	return cont;
+//Mise en place de conditions d'arrêt du système.
+void Simulation::JeContinue (int nbCycle){
+	int nmax = 1;
+	if (nbCycle > nmax){
+		std::cout << nmax << " tours de simulation effectués. Arrêt de la simulation" << std::endl;
+		poursuivre = false;
+		this->Afficher();
+	}
+	
+	if ((this->Situation ())[2] != 0){
+		std::cout << "Les populations ne cohabitent plus ! Arrêt de la simulation." << std::endl;
+		poursuivre = false;
+		this->Afficher();
+	}
 }
 
 

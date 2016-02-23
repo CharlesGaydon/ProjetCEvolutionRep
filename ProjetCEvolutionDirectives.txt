@@ -36,6 +36,7 @@ et dont les valeurs seront lues à l'initialisation et à chaque fin de cycle:
 		
 	Wmin = 0.001;
 	Tfini = 10000;
+	poursuivre = 1;
 
 19 fevrier : Individu et Environnement testés.
 TODO : destructeur Simulation.
@@ -46,4 +47,6 @@ Gérer la mort des individus à chaque tour (Simulation)
 23 février : 
 Les trois classes ce créent et détruisent sans problème.
 Affichage mis en place. Diffusion mise en place. Squelette de la simulation mis
-en place.
+en place. Métabolisme fonctionne. Ajout du paramètre bool poursuivre dans Simulation, qui pourra être modifié dans le fichier texte. JeContinue mis en place : arrête la simulation en changeant poursuivre si on a quitté la cohabitation, ou si on dépasse un certain nombre de tours.
+
+

@@ -24,7 +24,7 @@ class Simulation {
 		void Metabolisme ();
 		
 		//méthodes auxiliaires
-		bool JeContinue (int nbCycle);
+		void JeContinue (int nbCycle);
 		int* Situation ();
 		void Afficher ();		
 		
@@ -43,6 +43,7 @@ class Simulation {
 		
 		//Paramètres du modèle a pouvoir modifier en cours de route
 		//begin
+		bool poursuivre;
 		double Pmut;
 		double Pdeath;		
 		double Raa;

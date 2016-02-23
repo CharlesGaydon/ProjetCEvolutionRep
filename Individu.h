@@ -35,6 +35,8 @@ class Individu {
 		inline void setA (double nA);
 		inline void setB(double nB);
 		inline void setC (double nC);
+		inline void setDeadOrAlive (bool state);
+		inline void setgen (bool ngen);
 		//Actualisation
 		void actfitness (void);
 		
@@ -95,5 +97,11 @@ inline void Individu::setC (double nC){
 	phen[2] = nC;
 }
 
+inline void Individu::setDeadOrAlive (bool state){
+	vivant = state;
+}
 
+inline void Individu::setgen (bool ngen){
+	gen = ngen;
+}
 #endif //INDIVIDU_H_

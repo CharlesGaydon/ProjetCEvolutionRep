@@ -1,18 +1,22 @@
 #include <iostream>
 #include "Environnement.h"
 
-Environnement::Environnement () {
-	W = 0;
-	H = 0;
-	D = 0;
-	
-	resA = nullptr;
-	resB = nullptr;
-	resC = nullptr;
 
-	NresA = nullptr;
-	NresB = nullptr;
-	NresC = nullptr;
+//Conctructeurs
+Environnement::Environnement () {
+	//Déclaré privé pour empêcher son usage.
+	
+	//~ W = 0;
+	//~ H = 0;
+	//~ D = 0;
+	
+	//~ resA = nullptr;
+	//~ resB = nullptr;
+	//~ resC = nullptr;
+
+	//~ NresA = nullptr;
+	//~ NresB = nullptr;
+	//~ NresC = nullptr;
 	
 }
 
@@ -98,16 +102,18 @@ Environnement::Environnement (unsigned int nW, unsigned int nH, double nAinit, d
 	
 }
 
+//Destructeur
+
 Environnement::~Environnement (){
-	
-	for (int i = 0 ; i< W ; i++){	
+
+	for (unsigned int i = 0 ; i< W ; i++){	
 		delete[] resA[i];
 		delete[] resB[i];
 		delete[] resC[i];
 		
 		delete[] NresA[i];
 		delete[] NresB[i];
-		delete[] NresC[i];				
+		delete[] NresC[i];
 	}		
 	delete[] resA;
 	delete[] resB;
@@ -116,6 +122,26 @@ Environnement::~Environnement (){
 	delete[] NresA;
 	delete[] NresB;
 	delete[] NresC;
+	
+}
+
+//Méthodes de la simulation
+
+void Environnement::Diffusion (){
+	//TODO
+}
+
+//Méthodes auxilaires
+
+//Méthodes auxiliaires
+
+void Environnement::AfficherA (){
+	for (unsigned int j = 0 ; j<H ; j++){
+		for (unsigned int i = 0 ; i<W ; i++){
+			std::cout << resA[i][j] << " ";
+		}
+		std::cout << "" << std::endl;
+	}	
 }
 
 

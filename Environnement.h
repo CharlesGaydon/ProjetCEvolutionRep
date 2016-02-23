@@ -23,7 +23,6 @@ class Environnement {
 		double** NresC;
 		
 		//constructeurs
-		Environnement ();
 		Environnement (unsigned int nW, unsigned int nH, double nAinit);
 		Environnement (unsigned int nW, unsigned int nH, double nAinit, double nD);
 		
@@ -40,10 +39,15 @@ class Environnement {
 		inline double getNC (int i, int j) const;
 
 		
-		//méthodes	
-		void diffusion ();
+		//méthodes	de la simulation
+		void Diffusion ();
 		
-
+		//méthodes auxiliaires
+		void AfficherA ();
+	private:
+	
+		//constructeur non utilisable
+		Environnement ();
 	
 	
 };

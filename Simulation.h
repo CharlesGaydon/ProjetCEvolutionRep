@@ -6,39 +6,57 @@
 
 class Simulation {
 	
+	public:
+	
+		//constructeurs
+		Simulation (unsigned int nW, unsigned int nH, double nT, double nAinit);
+		Simulation (unsigned int nW, unsigned int nH, double nT, double nAinit, double nD);
+	
+		//destructeur
+		~Simulation ();
+		
+		//méthodes de la simulation
+		int Simulate();
+		
+		void Hecatombe ();
+		void GuerreSexuelle ();
+		void Mutation ();
+		void Metabolisme ();
+		
+		//méthodes auxiliaires
+		bool JeContinue (int nbCycle);
+		int* Situation ();
+		void Afficher ();		
+		
+		
 	protected:
-		
-		Environnement MAP;
-		Individu*** pop;
-		
-		//variables
-		
-		unsigned int T;
+	
+		Environnement* MAP;
+		Individu*** pop;	
+			
+		//variables		
+		unsigned int T; //nb de tours d'un cycle
 		double Ainit;
 		double D;
+		unsigned int W;
+		unsigned int H;
 		
 		//Paramètres du modèle a pouvoir modifier en cours de route
-
+		//begin
 		double Pmut;
-		double Pdeath;
-		
+		double Pdeath;		
 		double Raa;
 		double Rbb;
 		double Rab;
-		double Rbc;
-		
-		
+		double Rbc;		
 		double Wmin;
 		double Tfini;
-		
-	public:
+		//end
+
+	private:
 	
-	//constructeurs
-	Simulation ();
-	Simulation (double nT, double nAinit);
-	Simulation (double nT, double nAinit, double nD);
-	
-	//variables paramètres
+		//constructeur par défaut non utilisable
+		Simulation ();		
 			
 };
 

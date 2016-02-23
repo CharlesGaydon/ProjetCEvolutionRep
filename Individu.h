@@ -22,14 +22,19 @@ class Individu {
 		
 		
 		//Accesseurs
-		inline unsigned int getx (void) const;
-		inline unsigned int gety (void) const;		
-		inline double getfitness (void) const;
-		inline double* getphen (void) const;
-		inline bool getgen (void) const;
-		inline bool candivide (void) const;
-		inline bool isalive (void) const;
+		inline unsigned int getx () const;
+		inline unsigned int gety () const;		
+		inline double getfitness () const;
+		inline double* getphen () const;
+		inline bool getgen () const;
+		inline bool candivide () const;
+		inline bool isalive () const;
 		
+		//mutateurs
+		
+		inline void setA (double nA);
+		inline void setB(double nB);
+		inline void setC (double nC);
 		//Actualisation
 		void actfitness (void);
 		
@@ -46,7 +51,7 @@ class Individu {
 	
 };
 
-//Definition des accesseurs
+//Definition des accesseurs inline
 
 inline unsigned int Individu::getx (void) const {
 	return x;
@@ -75,5 +80,20 @@ inline bool Individu::candivide (void) const {
 inline bool Individu::isalive (void) const{
 	return vivant;
 }
+
+//Definition des mutateurs inline
+
+inline void Individu::setA (double nA){
+	phen[0] = nA;
+}
+
+inline void Individu::setB (double nB){
+	phen[1] = nB;
+}
+
+inline void Individu::setC (double nC){
+	phen[2] = nC;
+}
+
 
 #endif //INDIVIDU_H_

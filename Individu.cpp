@@ -16,7 +16,6 @@ Individu::Individu (void){
 	x = 0;
 	y = 0;
 
-
 }
 
 Individu::Individu (unsigned int nx, unsigned int ny, bool ngen){

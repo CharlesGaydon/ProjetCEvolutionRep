@@ -164,6 +164,7 @@ int Simulation::Simulate (){
 			this->Afficher ();
 		}
 		nbCycle++;	
+		//clean l'environnement
 	}
 }
 
@@ -176,7 +177,34 @@ void Simulation::GuerreSexuelle (){
 }
 
 void Simulation::Metabolisme (){
-	//TODO
+	Individu* p = nullptr;
+	double dt = 0.1;
+	
+	double Aout = 0;
+	double A = 0;
+	double Bout = 0;
+	double B;
+	
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			p = pop[i][j];
+			if (p->isalive ()){
+				if (p->getgen ()){
+					//Métabolisme B
+					for (int t = 0; t<10 ; t++){
+						Aout = MAP->getA(i,j);
+						A = ((pop[i][j])->getphen())[0];
+						MAP->setA(i, j, Aout - dt*Aout*Raa);
+						(pop[i][j])->setA
+					}
+				}else{
+					//Métabolisme A
+					
+					
+				}
+			}			
+		}
+	}
 }
 
 void Simulation::Mutation (){

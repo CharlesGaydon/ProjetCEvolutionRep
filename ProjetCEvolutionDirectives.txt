@@ -43,3 +43,7 @@ diffusion et la tester. (Environnement)
 Empecher certains constructeurs par défaut (tous, en fait !)
 Gérer la mort des individus à chaque tour (Simulation)
 
+23 février : 
+Les trois classes ce créent et détruisent sans problème.
+Affichage mis en place. Diffusion mise en place. Squelette de la simulation mis
+en place.

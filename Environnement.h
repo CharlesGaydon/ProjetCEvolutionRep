@@ -37,7 +37,11 @@ class Environnement {
 		inline double getNA (int i, int j) const;
 		inline double getNB (int i, int j) const;
 		inline double getNC (int i, int j) const;
-
+		
+		//mutateurs
+		inline void setA (int i, int j, double nA);
+		inline void setB (int i, int j, double nB);
+		inline void setC (int i, int j, double nC);
 		
 		//méthodes	de la simulation
 		void Diffusion ();
@@ -73,6 +77,18 @@ inline double Environnement::getNB (int i, int j) const {
 }
 inline double Environnement::getNC (int i, int j) const {
 	return NresC[i][j];
+}
+
+//definition of inline setters
+
+inline void Environnement::setA (int i, int j, double nA) {
+	resA[i][j] = nA;
+}
+inline void Environnement::setB (int i, int j, double nB) {
+	resB[i][j] = nB;
+}
+inline void Environnement::setC (int i, int j, double nC) {
+	resC[i][j] = nC;
 }
 
 

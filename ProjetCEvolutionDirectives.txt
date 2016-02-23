@@ -39,6 +39,7 @@ et dont les valeurs seront lues à l'initialisation et à chaque fin de cycle:
 	poursuivre = 1;
 
 19 fevrier : Individu et Environnement testés.
+
 TODO : destructeur Simulation.
 diffusion et la tester. (Environnement)
 Empecher certains constructeurs par défaut (tous, en fait !)
@@ -47,6 +48,11 @@ Gérer la mort des individus à chaque tour (Simulation)
 23 février : 
 Les trois classes ce créent et détruisent sans problème.
 Affichage mis en place. Diffusion mise en place. Squelette de la simulation mis
-en place. Métabolisme fonctionne. Ajout du paramètre bool poursuivre dans Simulation, qui pourra être modifié dans le fichier texte. JeContinue mis en place : arrête la simulation en changeant poursuivre si on a quitté la cohabitation, ou si on dépasse un certain nombre de tours.
+en place. Métabolisme fonctionne.  MAJparametres crée et à implémenter. 
+Remplissage aléatoire dans constructeur de Simulation. Affichage corrigé
+Gestion des temps de cycle effectuée. MAJfitness implémenté. Mutation implémenté. Probabilité de Hecatombe corrigée. Ordre des opérations dans la simulation affiné.
 
+TODO : Readparametre
+GuerreSexuelle
+Affichage en couleurs.
 

@@ -128,7 +128,34 @@ Environnement::~Environnement (){
 //Méthodes de la simulation
 
 void Environnement::Diffusion (){
-	//TODO
+	int x = 0;
+	int y = 0;
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){
+			
+			NresA[i][j] = resA[i][j];
+			NresB[i][j] = resB[i][j];
+			NresC[i][j] = resC[i][j];
+			
+			for (int dx = -1; dx<2 ; dx++){
+				for (int dy = -1 ; dy<2 ; dy++){
+					x = i + dx;
+					y = j + dy;
+					if (x<0){x = W-1;}
+					if (x == W){x = 0;}
+					if (y<0){y = H-1;}
+					if (y == H){y = 0;}
+					NresA[i][j]+= D*resA[x][y];
+					NresB[i][j]+= D*resB[x][y];
+					NresC[i][j]+= D*resC[x][y];
+				}
+			}
+		resA[i][j] = NresA[i][j] - 9*D*resA[i][j];
+		resB[i][j] = NresB[i][j] - 9*D*resB[i][j];
+		resC[i][j] = NresC[i][j] - 9*D*resC[i][j];
+
+		}
+	}
 }
 
 //Méthodes auxilaires

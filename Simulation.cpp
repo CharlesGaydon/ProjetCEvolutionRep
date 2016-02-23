@@ -139,7 +139,7 @@ Simulation::~Simulation () {
 
 int Simulation::Simulate (){
 	int nbCycle = 0;
-	
+	this->Metabolisme ();
 	//TODO : lecture du fichier texte pour paramètres
 	while (this->JeContinue (nbCycle)){
 		for (unsigned int i = 0 ; i<T ; i++){
@@ -157,8 +157,7 @@ int Simulation::Simulate (){
 			//Après division, un individu ne peut se reproduire dans le même tour.
 			this->GuerreSexuelle ();
 			//Mutation aléatoire des organisme independemment les uns des autres.
-			this->Mutation ();
-			
+			this->Mutation ();			
 			//Métabolisme des individus. La FITNESS est actualisée pour tous.
 			this->Metabolisme ();
 			//Affichage de la boîte de pétri

@@ -14,3 +14,6 @@ Individu.o: Individu.cpp Individu.h
 
 Simulation.o: Simulation.cpp Simulation.h
 	g++ -c Simulation.cpp -o Simulation.o -std=c++11 -g
+
+clean :
+	rm *.o

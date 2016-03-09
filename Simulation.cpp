@@ -52,7 +52,7 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
 		for (unsigned int j = 0 ; j<H ; j++){
-			pop[i][j] = new Individu(i,j, true);
+			pop[i][j] = new Individu(i,j, 1);
 		}
 	}
 	unsigned int i = 0;
@@ -62,7 +62,7 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
 			std::cout << i << " " << j << std::endl;//ok
 			if ((pop[i][j])->getgen ()){
-				pop[i][j]->setgen(false);
+				pop[i][j]->setgen(0);
 				nbA++;
 			}
 	}
@@ -92,7 +92,7 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	for (unsigned int i = 0 ; i<W ; i++){
 		pop[i] = new Individu*[H];
 		for (unsigned int j = 0 ; j<H ; j++){
-			pop[i][j] = new Individu(i,j, true);
+			pop[i][j] = new Individu(i,j, 1);
 		}
 	}
 	unsigned int i = 0;
@@ -102,7 +102,7 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
 			std::cout << i << " " << j << std::endl;//ok
 			if ((pop[i][j])->getgen ()){
-				pop[i][j]->setgen(false);
+				pop[i][j]->setgen(0);
 				nbA++;
 			}
 	}
@@ -173,7 +173,6 @@ void Simulation::Hecatombe (){
 			p = pop[i][j];
 			if (p->isalive()){
 				newState = (((double) std::rand()/RAND_MAX)>=Pdeath);
-				std::cout << "individu changed to : "<< newState << std::endl;
 				p->setDeadOrAlive(newState);
 			}
 		}
@@ -182,7 +181,13 @@ void Simulation::Hecatombe (){
 }
 
 void Simulation::GuerreSexuelle (){
-	//TODO
+	//Parcours et enregistrement de toutes les cases vides dans un tableau 2D
+	//Mélange aléatoire des cases du tableau avec fonction XX
+	//Pour chaque case vide :
+		//Parcourir les cases voisines et sélectionner le plus fort à même de se battre
+		//Diviser par deux ses concentrations, donc sa fitness, et passer à 0 
+		//le booleen candivide puis
+		//remplir le gap par le constructeur par copie.
 }
 
 void Simulation::Metabolisme (){
@@ -239,6 +244,8 @@ void Simulation::Metabolisme (){
 			
 		} //end for
 	} //end for
+	
+	this->MAJfitness ();
 }
 
 void Simulation::Mutation (){
@@ -252,7 +259,6 @@ void Simulation::Mutation (){
 			p = pop[i][j];
 			if (p->isalive()){
 				mutate = (((double) std::rand()/RAND_MAX)<=Pmut);
-				std::cout << "mutate : " << mutate << std::endl;
 				if (mutate){
 					if (p->getgen()){
 						p->setgen(false);
@@ -275,18 +281,25 @@ void Simulation::MAJfitness (){
 			
 			p = pop[i][j];
 			if (p->isalive ()){
-				if (p->getgen ()){
-						p->setfitness ((p->getphen())[2]);
-					}else{
-						p->setfitness ((p->getphen())[1]);
-					}
-				if (p->getfitness () < Wmin){
-					p->setfitness(0);
-				}
+				this->MAJfitnessij(i, j);
 			}
 			
 		}
 	}
+}
+
+void Simulation::MAJfitnessij (int i, int j){
+	Individu* p = nullptr;
+	p = pop[i][j];
+	
+	if (p->getgen ()){
+		p->setfitness((p->getphen ())[2]);
+	}else{
+		p->setfitness((p->getphen ())[1]);
+	}
+	if(p->getfitness () < Wmin){
+		p->setfitness(0);
+	}	
 }
 
 //Méthodes auxiliaires
@@ -364,12 +377,6 @@ void Simulation::JeContinue (int temps){
 		poursuivre = false;
 		this->Afficher();
 	}
-	//TO DELETE
-	//~ if ((this->Situation ())[2] != 0){
-		//~ std::cout << "Les populations ne cohabitent plus ! Arrêt de la simulation." << std::endl;
-		//~ poursuivre = false;
-		//~ this->Afficher();
-	//~ }
 }
 
 void Simulation::MAJparametres (){

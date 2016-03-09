@@ -23,6 +23,7 @@ class Simulation {
 		void Mutation ();
 		void Metabolisme ();
 		void MAJfitness ();
+		void MAJfitnessij (int i, int j);
 		
 		//méthodes auxiliaires
 		void JeContinue (int nbCycle);

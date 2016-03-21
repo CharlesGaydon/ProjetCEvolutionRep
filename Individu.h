@@ -42,6 +42,7 @@ class Individu {
 		inline void kill ();
 		inline void mutate ();
 		inline void godivide ();
+		inline void stopdivide ();
 
 		void Dby2 ();
 		
@@ -126,5 +127,9 @@ inline void Individu::mutate (){
 
 inline void Individu::godivide (){
 	divide = true;
+}
+
+inline void Individu::stopdivide (){
+	divide = false;
 }
 #endif //INDIVIDU_H_

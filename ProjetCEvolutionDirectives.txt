@@ -56,3 +56,5 @@ TODO : Readparametre
 GuerreSexuelle
 Affichage en couleurs.
 
+9 Mai -> EXAMEN du Code!
+

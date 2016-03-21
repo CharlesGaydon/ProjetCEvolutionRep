@@ -2,7 +2,9 @@
 #include "Individu.h"
 #include "Simulation.h"
 #include <iostream>
-
+#include <vector>
+#include <algorithm>    // std::random_shuffle
+#include <cstdlib>    //time
 //Constructeurs
 
 Simulation::Simulation (){
@@ -66,6 +68,10 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 				nbA++;
 			}
 	}
+	situation = new int[3];
+	situation[0] = nbA;
+	situation[1] = W*H - nbA;
+	situation[2] = 0; //cohabitation
 	
 }
 
@@ -106,7 +112,11 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 				nbA++;
 			}
 	}
-	
+
+	situation = new int[3];
+	situation[0] = nbA;
+	situation[1] = W*H - nbA;
+	situation[2] = 0; //cohabitation
 }
 
 //Destructeurs
@@ -120,6 +130,7 @@ Simulation::~Simulation () {
 	}
 	delete[] pop;
 	delete MAP;
+	delete situation;
 }
 
 
@@ -148,7 +159,7 @@ int Simulation::Simulate (){
 			//Mutation aléatoire des organisme independemment les uns des autres.
 		this->Mutation ();			
 			//Métabolisme des individus. La FITNESS est actualisée pour tous.
-		this->Metabolisme (); //actualiser la fitness egalement
+		this->Metabolisme (); //actualiser la fitness egalement, remet divide à true
 			//Affichage de la boîte de pétri
 
 		
@@ -165,29 +176,108 @@ int Simulation::Simulate (){
 
 void Simulation::Hecatombe (){
 	
-	bool newState = true;
+	bool tokill = true;
 	Individu* p = nullptr;
 	
 	for (unsigned int i = 0 ; i<W ; i++){
 		for (unsigned int j = 0 ; j<H ; j++){
 			p = pop[i][j];
 			if (p->isalive()){
-				newState = (((double) std::rand()/RAND_MAX)>=Pdeath);
-				p->setDeadOrAlive(newState);
+				tokill = (((double) std::rand()/RAND_MAX)<=Pdeath);
+				if(tokill){
+					p->kill();
+					situation[p->getgen()]--;
+				}
 			}
 		}
 	}
-	
 }
-
+	
+//programme :
+	//Parcourir les cases voisines et sélectionner le plus fort à même de se battre
+	//Diviser par deux ses concentrations, donc sa fitness, et passer à 0 
+	//le booleen candivide puis
+	//remplir le gap par le constructeur par copie.
 void Simulation::GuerreSexuelle (){
 	//Parcours et enregistrement de toutes les cases vides dans un tableau 2D
-	//Mélange aléatoire des cases du tableau avec fonction XX
-	//Pour chaque case vide :
-		//Parcourir les cases voisines et sélectionner le plus fort à même de se battre
-		//Diviser par deux ses concentrations, donc sa fitness, et passer à 0 
-		//le booleen candivide puis
-		//remplir le gap par le constructeur par copie.
+	Individu* p = nullptr;
+	
+
+	int n = W*H - (situation[0]+situation[1]);
+	std::vector<int*> gap = {};
+	int* tab = nullptr;
+	
+	for (int i = 0; i<W ; i++){
+		for(int j = 0 ; j<H ; j++){
+			p = pop[i][j];
+			if(!(p->isalive())){
+				tab = new int[2];
+				tab[0] = i;
+				tab[1] = j;
+				gap.push_back(tab);
+			}
+
+		}
+	}
+	
+	//Mélange des éléments - (controle dimension n fait)
+	if(n>2){
+		std::random_shuffle(&gap[0], &gap[n-1]);
+	}
+	
+	//initialisation des variables intermédiaires
+	int ni = 0;
+	int nj = 0;
+	int nf = 0;
+	
+	int Roci;
+	int Rocj;
+	double Rocf;
+	
+	//pour chaque gap :
+	for (int k = 0 ; k<n ; k++){
+		Roci = -1;
+		Rocj = -1;
+		Rocf = -1;
+		for (int di = -1 ; di<=1; di++){
+			for(int dj = -1 ; dj<=1 ; dj++){
+				if((di !=0) || (dj != 0)){
+					//parcour des cases voisines
+					ni = gap[k][0] + di;
+					nj = gap[k][1] + dj;
+					if (ni<0){ni = W-1;}
+					if (ni == W){ni = 0;}
+					if (nj<0){nj = H-1;}
+					if (nj == H){nj = 0;}
+					
+					//pour chacune, si vivante et apte à se reproduire : 
+					p = pop[ni][nj];
+					nf = p->getfitness ();
+					if (p->isalive () && p->candivide ()){
+						if(nf > Rocf){
+							Rocf = nf;
+							Roci = ni;
+							Rocj = nj;
+						}
+					}
+				}
+			}
+		}
+		if(Rocf > Wmin){
+			std::cout << "Reproduction avec fitness = "<< Rocf << " en case "<< Roci << "  " << Rocj<< std::endl ;
+
+			p = pop[Roci][Rocj]; //tu gagne Rocco !
+			p->Dby2 (); //%2 phen, divide passé à false.
+			this->MAJfitnessij(Roci,Rocj); //fitness act
+			pop[gap[k][0]][gap[k][1]] = new Individu(*p); //Hump
+			situation[p->getgen ()]++;	
+		} //else do nothing
+	}
+
+	//delete des tableaux du vecteur
+	for (int k = 0; k<n ; k++){
+		delete gap[k];
+	}
 }
 
 void Simulation::Metabolisme (){
@@ -245,7 +335,20 @@ void Simulation::Metabolisme (){
 		} //end for
 	} //end for
 	
+	
+	//Actualisation de la fitness
 	this->MAJfitness ();
+
+	//remise à true de divide
+	for (unsigned int i = 0 ; i<W ; i++){
+		for (unsigned int j = 0 ; j<H ; j++){	
+			p = pop[i][j];
+			if (p->isalive ()){
+				p->godivide();
+			}
+		}
+	}
+	
 }
 
 void Simulation::Mutation (){
@@ -260,11 +363,9 @@ void Simulation::Mutation (){
 			if (p->isalive()){
 				mutate = (((double) std::rand()/RAND_MAX)<=Pmut);
 				if (mutate){
-					if (p->getgen()){
-						p->setgen(false);
-					}else{
-						p->setgen(true);
-					}
+					situation[p->getgen()]--;
+					p->mutate();
+					situation[p->getgen()]++;
 				}
 			}
 			
@@ -291,12 +392,7 @@ void Simulation::MAJfitness (){
 void Simulation::MAJfitnessij (int i, int j){
 	Individu* p = nullptr;
 	p = pop[i][j];
-	
-	if (p->getgen ()){
-		p->setfitness((p->getphen ())[2]);
-	}else{
-		p->setfitness((p->getphen ())[1]);
-	}
+	p->setfitness((p->getphen ())[p->getgen ()]);
 	if(p->getfitness () < Wmin){
 		p->setfitness(0);
 	}	
@@ -307,10 +403,10 @@ void Simulation::MAJfitnessij (int i, int j){
 void Simulation::Afficher (){
 	
 	Individu* p = nullptr;
-	int* sit = this->Situation ();
+	this->Situation ();
 	
-	std::cout << "La simulation est dans l'état : " << sit[2] << " avec : "<< std::endl ;
-	std::cout << sit[0]<< " individus de phétonype A et "<< sit[1] << " individus de phétonype B." <<std::endl;
+	std::cout << "La simulation est dans l'état : " << situation[2] << " avec : "<< std::endl ;
+	std::cout << situation[0]<< " individus de phétonype A et "<< situation[1] << " individus de phétonype B." <<std::endl;
 	
 	for (unsigned int j = 0 ; j<H ; j++){
 		for (unsigned int i = 0 ; i<W ; i++){
@@ -329,44 +425,44 @@ void Simulation::Afficher (){
 }
 
 
-//return : nb de genA, de genB, et un code pour la situation sur le plateau:
+//modifie situation par code pour la situation sur le plateau:
 // -1 : extinction ;
 // 0 : cohabitation ;
 // 1 : S (gen B) éteinte.
 
 
-int* Simulation::Situation (){
+void Simulation::Situation (){
 	//NB : 	//pop L == gen A == code bool 0
 	
-	int* Sit = new int[3]; 
-	Sit[0] = 0;
-	Sit[1] = 0;
-	Sit[2] = 0;
-	Individu* p = nullptr;
-	for (unsigned int i = 0 ; i<W ; i++){
-		for (unsigned int j = 0 ; j<H ; j++){
-			
-			p = pop[i][j];
-			if (p->getgen() && p->isalive()){
-				Sit[1]++;
-			}else if (p->isalive()){
-				Sit[0]++;
-			}
-			
-		}
-	}
+	//~int* Sit = new int[3]; 
+	//~Sit[0] = 0;
+	//~Sit[1] = 0;
+	//~Sit[2] = 0;
+	//~Individu* p = nullptr;
+	//~for (unsigned int i = 0 ; i<W ; i++){
+		//~for (unsigned int j = 0 ; j<H ; j++){
+			//~
+			//~p = pop[i][j];
+			//~if (p->getgen() && p->isalive()){
+				//~Sit[1]++;
+			//~}else if (p->isalive()){
+				//~Sit[0]++;
+			//~}
+			//~
+		//~}
+	//~}
 	
-	if (Sit[1] == 0){
-		if (Sit[0] == 0){
-			Sit[2] = -1; //extinction
+	//
+	
+	if (situation[1] == 0){
+		if (situation[0] == 0){
+			situation[2] = -1; //extinction
 		}else{
-			Sit[2] = 1; //S éteinte (plus de gen B)	
+			situation[2] = 1; //S éteinte (plus de gen B)	
 		}
-		return Sit;
+	}else{
+		situation[2] = 0; //cohabitation. CAS genA éteint non prévu.
 	}
-	Sit[2] = 0; //cohabitation. CAS genA étein non prévu.
-	
-	return Sit;
 }
 
 //Mise en place de conditions d'arrêt du système.
@@ -390,7 +486,7 @@ void Simulation::MAJparametres (){
 	Rbc = 0.1;	
 		
 	Wmin = 0.001;
-	Tfini = 10000;
+	Tfini = 5000;
 	poursuivre = true;
 }
 

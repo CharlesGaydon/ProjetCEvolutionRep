@@ -27,7 +27,7 @@ class Simulation {
 		
 		//méthodes auxiliaires
 		void JeContinue (int nbCycle);
-		int* Situation ();
+		void Situation ();
 		void Afficher ();	
 		void MAJparametres ();	
 		
@@ -35,7 +35,8 @@ class Simulation {
 	protected:
 	
 		Environnement* MAP;
-		Individu*** pop;	
+		Individu*** pop;
+		int* situation; //nbA, nbB, sit = 0 si cohab, -1 si extinction, 1 si seulement A.
 			
 		//variables		
 		unsigned int T; //nb de tours d'un cycle
@@ -52,7 +53,7 @@ class Simulation {
 		double Raa;
 		double Rbb;
 		double Rab;
-		double Rbc;		
+		double Rbc;
 		double Wmin;
 		double Tfini; //nb de tours total
 		//end

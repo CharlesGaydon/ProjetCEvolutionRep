@@ -5,16 +5,17 @@ using namespace std;
 
 //constructeurs
 
+//passé en private
 Individu::Individu (void){
-	phen = nullptr;	
-	divide = true;
-	
-	gen = false;	
-	vivant = false;
-
-	fitness = 0;
-	x = 0;
-	y = 0;
+	//~phen = nullptr;	
+	//~divide = true;
+	//~
+	//~gen = false;	
+	//~vivant = false;
+//~
+	//~fitness = 0;
+	//~x = 0;
+	//~y = 0;
 
 }
 
@@ -33,6 +34,7 @@ Individu::Individu (unsigned int nx, unsigned int ny, bool ngen){
 	fitness = 0;
 	x = nx;
 	y = ny;
+	
 }
 
 
@@ -46,14 +48,14 @@ Individu::Individu (const Individu& model){
 	for (int i = 0 ; i < 3 ; i++){
 		phen[i] = pmod[i];
 	}
-	divide = model.candivide();
+	divide = model.candivide ();
 	
-	gen = model.getgen();
-	vivant = model.isalive();
+	gen = model.getgen ();
+	vivant = model.isalive ();
 
-	this->actfitness ();
-	x = model.getx();
-	y = model.gety();
+	fitness = model.getfitness ();
+	x = model.getx ();
+	y = model.gety ();
 
 }
 
@@ -65,11 +67,17 @@ Individu::~Individu (){
 	
 }
 
-//pour construcetur par copie.
+//mutateurs
+
+void Individu::Dby2 (){
+	phen[0] = phen[0]/2;
+	phen[1] = phen[1]/2;
+	phen[2] = phen[2]/2;
+	divide = false;
+}
+
+//actualisation
+
 void Individu::actfitness (){
-	if (gen){
-		fitness = phen[2];
-	}else{
-		fitness = phen[1];
-	}
+	fitness = phen[gen];
 }

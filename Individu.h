@@ -35,12 +35,18 @@ class Individu {
 		inline void setA (double nA);
 		inline void setB(double nB);
 		inline void setC (double nC);
-		inline void setDeadOrAlive (bool state);
+		
 		inline void setgen (bool ngen);
 		inline void setfitness (double nfit);
 		
+		inline void kill ();
+		inline void mutate ();
+		inline void godivide ();
+
+		void Dby2 ();
+		
 		//Actualisation
-		void actfitness (void);//TODO delete
+		void actfitness ();
 		
 	protected :
 	
@@ -99,15 +105,26 @@ inline void Individu::setC (double nC){
 	phen[2] = nC;
 }
 
-inline void Individu::setDeadOrAlive (bool state){
-	vivant = state;
-}
-
 inline void Individu::setgen (bool ngen){
 	gen = ngen;
 }
 
 inline void Individu::setfitness (double nfit){
 	fitness = nfit;
+}
+
+//Special ones
+
+inline void Individu::kill (){
+	vivant = false;
+}
+
+inline void Individu::mutate (){
+	gen = !gen;
+	this->actfitness ();
+}
+
+inline void Individu::godivide (){
+	divide = true;
 }
 #endif //INDIVIDU_H_

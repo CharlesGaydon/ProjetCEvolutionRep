@@ -2,7 +2,9 @@
 #include "Environnement.h"
 #include "Simulation.h"
 
+
 #include <vector>
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -148,6 +150,5 @@ int main(){
 	
 	
 	delete etats;
-	
-	return 0;  
+	return 0;
 }

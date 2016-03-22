@@ -9,8 +9,8 @@ class Simulation {
 	public:
 	
 		//constructeurs
-		Simulation (unsigned int nW, unsigned int nH, double nT, double nAinit);
-		Simulation (unsigned int nW, unsigned int nH, double nT, double nAinit, double nD);
+		Simulation (unsigned int nW, unsigned int nH, unsigned int nT, double nAinit);
+		Simulation (unsigned int nW, unsigned int nH,  unsigned int nT, double nAinit, double nD);
 	
 		//destructeur
 		~Simulation ();
@@ -27,10 +27,9 @@ class Simulation {
 		
 		//méthodes auxiliaires
 		void JeContinue (int nbCycle);
-		void Situation ();
+		int Situation ();
 		void Afficher ();	
-		void MAJparametres ();	
-		
+		void MAJparametres ();			
 		
 	protected:
 	

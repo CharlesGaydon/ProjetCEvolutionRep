@@ -32,7 +32,7 @@ Simulation::Simulation (){
 //:param nT: nombre de tours avant changement de milieu : 
 //durée de la simulation
 Simulation::Simulation (unsigned int nW, unsigned int nH, 
-						double nT, double nAinit){
+						 unsigned int nT, double nAinit){
 							
 	T = nT; 
 	Ainit = nAinit;
@@ -62,7 +62,6 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	while (nbA <= max){
 			i = ((double) std::rand()/(double) RAND_MAX)*((double) (W));
 			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
-			std::cout << i << " " << j << std::endl;//ok
 			if ((pop[i][j])->getgen ()){
 				pop[i][j]->setgen(0);
 				nbA++;
@@ -77,7 +76,7 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 
 
 Simulation::Simulation (unsigned int nW, unsigned int nH, 
-						double nT, double nAinit, double nD){
+						 unsigned int nT, double nAinit, double nD){
 	T = nT;
 	Ainit = nAinit;
 	D = nD;
@@ -106,7 +105,6 @@ Simulation::Simulation (unsigned int nW, unsigned int nH,
 	while (nbA <= max){
 			i = ((double) std::rand()/(double) RAND_MAX)*((double) (W));
 			j = ((double) std::rand()/(double) RAND_MAX)*((double) (H));
-			std::cout << i << " " << j << std::endl;//ok
 			if ((pop[i][j])->getgen ()){
 				pop[i][j]->setgen(0);
 				nbA++;
@@ -166,7 +164,7 @@ int Simulation::Simulate (){
 		temps++;	
 		this->JeContinue (temps);
 		if (temps%T == 0){
-			this->Afficher ();
+			//this->Afficher ();
 			//LECTURE DES PARAMèTRES.
 			MAP->clean ();
 		}
@@ -186,6 +184,7 @@ void Simulation::Hecatombe (){
 				tokill = (((double) std::rand()/RAND_MAX)<=Pdeath);
 				if(tokill){
 					p->kill();
+					p->stopdivide ();
 					situation[p->getgen()]--;
 				}
 			}
@@ -194,6 +193,7 @@ void Simulation::Hecatombe (){
 }
 	
 //programme :
+//trouver les gap : c mortes et divide = true (ie : pas morte pendant ce tour)
 	//Parcourir les cases voisines et sélectionner le plus fort à même de se battre
 	//Diviser par deux ses concentrations, donc sa fitness, et passer à 0 
 	//le booleen candivide puis
@@ -201,22 +201,21 @@ void Simulation::Hecatombe (){
 void Simulation::GuerreSexuelle (){
 	//Parcours et enregistrement de toutes les cases vides dans un tableau 2D
 	Individu* p = nullptr;
-	
 
-	int n = W*H - (situation[0]+situation[1]);
 	std::vector<int*> gap = {};
 	int* tab = nullptr;
+	int n = 0;
 	
 	for (int i = 0; i<W ; i++){
 		for(int j = 0 ; j<H ; j++){
 			p = pop[i][j];
-			if(!(p->isalive())){
+			if(!(p->isalive()) && (p->candivide ())){
 				tab = new int[2];
 				tab[0] = i;
 				tab[1] = j;
 				gap.push_back(tab);
+				n++;
 			}
-
 		}
 	}
 	
@@ -264,7 +263,7 @@ void Simulation::GuerreSexuelle (){
 			}
 		}
 		if(Rocf > Wmin){
-			std::cout << "Reproduction avec fitness = "<< Rocf << " en case "<< Roci << "  " << Rocj<< std::endl ;
+			//std::cout << "Reproduction avec fitness = "<< Rocf << " en case "<< Roci << "  " << Rocj<< std::endl ;
 
 			p = pop[Roci][Rocj]; //tu gagne Rocco !
 			p->Dby2 (); //%2 phen, divide passé à false.
@@ -343,9 +342,8 @@ void Simulation::Metabolisme (){
 	for (unsigned int i = 0 ; i<W ; i++){
 		for (unsigned int j = 0 ; j<H ; j++){	
 			p = pop[i][j];
-			if (p->isalive ()){
-				p->godivide();
-			}
+			p->godivide();
+
 		}
 	}
 	
@@ -360,7 +358,7 @@ void Simulation::Mutation (){
 		for (unsigned int j = 0 ; j<H ; j++){
 			
 			p = pop[i][j];
-			if (p->isalive()){
+			if (p->isalive() && (!p->candivide ())){
 				mutate = (((double) std::rand()/RAND_MAX)<=Pmut);
 				if (mutate){
 					situation[p->getgen()]--;
@@ -431,29 +429,7 @@ void Simulation::Afficher (){
 // 1 : S (gen B) éteinte.
 
 
-void Simulation::Situation (){
-	//NB : 	//pop L == gen A == code bool 0
-	
-	//~int* Sit = new int[3]; 
-	//~Sit[0] = 0;
-	//~Sit[1] = 0;
-	//~Sit[2] = 0;
-	//~Individu* p = nullptr;
-	//~for (unsigned int i = 0 ; i<W ; i++){
-		//~for (unsigned int j = 0 ; j<H ; j++){
-			//~
-			//~p = pop[i][j];
-			//~if (p->getgen() && p->isalive()){
-				//~Sit[1]++;
-			//~}else if (p->isalive()){
-				//~Sit[0]++;
-			//~}
-			//~
-		//~}
-	//~}
-	
-	//
-	
+int Simulation::Situation (){
 	if (situation[1] == 0){
 		if (situation[0] == 0){
 			situation[2] = -1; //extinction
@@ -463,22 +439,26 @@ void Simulation::Situation (){
 	}else{
 		situation[2] = 0; //cohabitation. CAS genA éteint non prévu.
 	}
+	return situation[2];
 }
 
 //Mise en place de conditions d'arrêt du système.
 //TODO : changer nmax
 void Simulation::JeContinue (int temps){
 	if (temps > Tfini){
-		std::cout << Tfini << " temps de simulation effectués. Arrêt de la simulation. " << std::endl;
+		std::cout << T <<  " " << Ainit << " " <<  this->Situation ()<< std::endl;
+
 		poursuivre = false;
-		this->Afficher();
+	}
+	if (situation[2] == -1){
+		poursuivre = false;
 	}
 }
 
 void Simulation::MAJparametres (){
 	//TODO : import des paramètres depuis fichier texte
-	Pmut = 0.1;
-	Pdeath = 0.001;
+	Pmut = 0;
+	Pdeath = 0.02;
 		
 	Raa = 0.1;
 	Rbb = 0.1;
@@ -486,7 +466,29 @@ void Simulation::MAJparametres (){
 	Rbc = 0.1;	
 		
 	Wmin = 0.001;
-	Tfini = 5000;
+	Tfini = 10000;
 	poursuivre = true;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

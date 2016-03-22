@@ -56,5 +56,17 @@ TODO : Readparametre
 GuerreSexuelle
 Affichage en couleurs.
 
+
+21 mars
+Guerre sexuelle faite.
+TODO : finir dia phase en affination. Lecture des param.
+En toute rigueur, il devrait y avoir une transition exclusion->cohabitation autour de T~50, pour une grande plage de Ainit.
+
+22 mars
+Mise en place terminée d'un système d'exploration paramétrique afin de construire le diagramme de phase.
+On peut choisir le nombre de simulation effectué pour chaque parametre. Si des différences occurent, ce nombre est doublé et on 
+Choisit la valeur la plus fréquente obtenue.
+
+
 9 Mai -> EXAMEN du Code!
 

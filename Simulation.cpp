@@ -1,6 +1,8 @@
 #include "Environnement.h"
 #include "Individu.h"
 #include "Simulation.h"
+
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <algorithm>    // std::random_shuffle
@@ -202,7 +204,7 @@ void Simulation::GuerreSexuelle (){
 	//Parcours et enregistrement de toutes les cases vides dans un tableau 2D
 	Individu* p = nullptr;
 
-	std::vector<int*> gap = {};
+	std::vector <int*> gap = {};
 	int* tab = nullptr;
 	int n = 0;
 	
@@ -230,7 +232,7 @@ void Simulation::GuerreSexuelle (){
 	int nf = 0;
 	
 	double Rocf;
-	vector <int*> vois = {};
+	std::vector <int*> vois (0);
 	int* pos = nullptr; 
 	
 	//pour chaque gap :
@@ -262,7 +264,7 @@ void Simulation::GuerreSexuelle (){
 							pos = new int[2];
 							pos[0] = ni;
 							pos[1] = nj;
-							vois.push_back();
+							vois.push_back(pos);
 							Rocf = nf;
 						}
 					}
@@ -275,7 +277,7 @@ void Simulation::GuerreSexuelle (){
 			nf = std::rand()%vois.size();
 			ni = vois[nf][0];
 			nj = vois[nf][1];
-			
+				
 			p = pop[ni][nj]; //tu gagne Rocco !
 			p->Dby2 (); //%2 phen, divide passé à false.
 			this->MAJfitnessij(ni,nj); //fitness act

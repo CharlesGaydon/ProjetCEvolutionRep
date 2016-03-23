@@ -27,7 +27,7 @@ int main(){
 	//parametres
 	int NPrecision = 2; //2
 	int pasT = 5; //5
-	double pasA = 11	;	//4
+	double pasA = 4	;	//4
 
 	vector<vector<double*>> res (NPrecision+1, vector<double*> (0));
 	cout << res[0].size() << endl;
@@ -51,7 +51,7 @@ int main(){
 		string title = s.str();
 		
 		ofstream f(title.c_str());
-		cout << "Titre du fichier enregistré : " <<title.c_str() << endl;	
+		cout << "Titre du fichier a enregistrer : " <<title.c_str() << endl;	
 		for (int T = 1 ; T<=500 ; T = T + pasT){
 			for (double A = 0 ; A <= 50 ; A = A + pasA){
 				S = new Simulation(nW,nH,T,A);
@@ -61,7 +61,6 @@ int main(){
 
 				tab = new double[1];
 				tab[0] = S->Situation ();
-				cout << "On enregistre : " << tab[0] << " et i = " << i <<endl;
 				res[i].push_back(tab);
 				
 				delete S;
@@ -140,7 +139,7 @@ int main(){
 	
 	ofstream f(title.c_str());
 
-	cout << "Titre du fichier enregistré : " << title.c_str() << endl;
+	cout << "Titre du fichier a enregistrer : " << title.c_str() << endl;
 
 	for (int i = 0; i < res[0].size() ; i++){
 		f << res[0][i][0]<<" "<<res[0][i][1]<<" "<<res[1][i][0] << endl;

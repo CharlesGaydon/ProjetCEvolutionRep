@@ -25,9 +25,9 @@ int main(){
 //Construction du diagramme de phase BIS
 	
 	//parametres
-	int NPrecision = 2;
-	int pasT = 25;
-	double pasA = 9	;	
+	int NPrecision = 2; //2
+	int pasT = 5; //5
+	double pasA = 11	;	//4
 
 	vector<vector<double*>> res (NPrecision+1, vector<double*> (0));
 	cout << res[0].size() << endl;

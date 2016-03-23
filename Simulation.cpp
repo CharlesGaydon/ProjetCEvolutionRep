@@ -229,14 +229,13 @@ void Simulation::GuerreSexuelle (){
 	int nj = 0;
 	int nf = 0;
 	
-	int Roci;
-	int Rocj;
 	double Rocf;
+	vector <int*> vois = {};
+	int* pos = nullptr; 
 	
 	//pour chaque gap :
+	
 	for (int k = 0 ; k<n ; k++){
-		Roci = -1;
-		Rocj = -1;
 		Rocf = -1;
 		for (int di = -1 ; di<=1; di++){
 			for(int dj = -1 ; dj<=1 ; dj++){
@@ -253,24 +252,39 @@ void Simulation::GuerreSexuelle (){
 					p = pop[ni][nj];
 					nf = p->getfitness ();
 					if (p->isalive () && p->candivide ()){
-						if(nf > Rocf){
+						if(nf == Rocf){
+							pos = new int[2];
+							pos[0] = ni;
+							pos[1] = nj;
+							vois.push_back(pos);
+						}else if(nf > Rocf){
+							vois.clear();
+							pos = new int[2];
+							pos[0] = ni;
+							pos[1] = nj;
+							vois.push_back();
 							Rocf = nf;
-							Roci = ni;
-							Rocj = nj;
 						}
 					}
 				}
 			}
 		}
-		if(Rocf > Wmin){
+		if( Rocf > Wmin){
 			//std::cout << "Reproduction avec fitness = "<< Rocf << " en case "<< Roci << "  " << Rocj<< std::endl ;
-
-			p = pop[Roci][Rocj]; //tu gagne Rocco !
+			//Choix du Rocco :
+			nf = std::rand()%vois.size();
+			ni = vois[nf][0];
+			nj = vois[nf][1];
+			
+			p = pop[ni][nj]; //tu gagne Rocco !
 			p->Dby2 (); //%2 phen, divide passé à false.
-			this->MAJfitnessij(Roci,Rocj); //fitness act
+			this->MAJfitnessij(ni,nj); //fitness act
+			delete pop[gap[k][0]][gap[k][1]];
 			pop[gap[k][0]][gap[k][1]] = new Individu(*p); //Hump
 			situation[p->getgen ()]++;	
 		} //else do nothing
+		
+		vois.clear();
 	}
 
 	//delete des tableaux du vecteur

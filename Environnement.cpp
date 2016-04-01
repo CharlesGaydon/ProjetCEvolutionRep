@@ -170,7 +170,6 @@ void Environnement::clean (){
 			resC[i][j] = 0;
 		}
 	}
-	
 }
 
 

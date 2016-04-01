@@ -37,7 +37,7 @@ Individu::Individu (unsigned int nx, unsigned int ny, bool ngen){
 	
 }
 
-
+//petit blagueur qui perdait la mémoire!
 Individu::Individu (const Individu& model){
 	
 	phen = new double[3];
@@ -48,6 +48,8 @@ Individu::Individu (const Individu& model){
 	for (int i = 0 ; i < 3 ; i++){
 		phen[i] = pmod[i];
 	}
+	
+	delete pmod;
 	divide = model.candivide ();
 	
 	gen = model.getgen ();

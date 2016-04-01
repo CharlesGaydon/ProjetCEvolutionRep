@@ -163,7 +163,7 @@ int Simulation::Simulate (){
 			//Affichage de la boîte de pétri
 
 		
-		temps++;	
+		temps++;
 		this->JeContinue (temps);
 		if (temps%T == 0){
 			//this->Afficher ();
@@ -206,21 +206,21 @@ void Simulation::GuerreSexuelle (){
 
 	std::vector <int*> gap = {};
 	int* tab = nullptr;
-	int n = 0;
+
 	
 	for (int i = 0; i<W ; i++){
 		for(int j = 0 ; j<H ; j++){
 			p = pop[i][j];
-			if(!(p->isalive()) && (p->candivide ())){
+			if((!(p->isalive())) and (p->candivide ())){
 				tab = new int[2];
 				tab[0] = i;
 				tab[1] = j;
 				gap.push_back(tab);
-				n++;
+
 			}
 		}
 	}
-	
+	int n = gap.size()	;
 	//Mélange des éléments - (controle dimension n fait)
 	if(n>2){
 		std::random_shuffle(&gap[0], &gap[n-1]);
@@ -236,13 +236,13 @@ void Simulation::GuerreSexuelle (){
 	int* pos = nullptr; 
 	
 	//pour chaque gap :
-	
+
 	for (int k = 0 ; k<n ; k++){
 		Rocf = -1;
 		for (int di = -1 ; di<=1; di++){
 			for(int dj = -1 ; dj<=1 ; dj++){
 				if((di !=0) || (dj != 0)){
-					//parcour des cases voisines
+					//parcours des cases voisines
 					ni = gap[k][0] + di;
 					nj = gap[k][1] + dj;
 					if (ni<0){ni = W-1;}
@@ -260,6 +260,14 @@ void Simulation::GuerreSexuelle (){
 							pos[1] = nj;
 							vois.push_back(pos);
 						}else if(nf > Rocf){
+							if(vois.size() != 0){
+								if(vois[0] != nullptr){
+									for (std::vector< int* >::iterator it = vois.begin() ; it != vois.end(); ++it){	
+										delete[] *it;
+										*it = nullptr;
+									}
+								}
+							}
 							vois.clear();
 							pos = new int[2];
 							pos[0] = ni;
@@ -281,18 +289,32 @@ void Simulation::GuerreSexuelle (){
 			p = pop[ni][nj]; //tu gagne Rocco !
 			p->Dby2 (); //%2 phen, divide passé à false.
 			this->MAJfitnessij(ni,nj); //fitness act
+			std::cout <<"ok"<< gap[k][0]<< std::endl;
+			
 			delete pop[gap[k][0]][gap[k][1]];
-			pop[gap[k][0]][gap[k][1]] = new Individu(*p); //Hump
-			situation[p->getgen ()]++;	
+			std::cout <<"deleté"<< std::endl;
+			pop[gap[k][0]][gap[k][1]] = new Individu(*p); //Hump //le problème viendrait d'ici...
+			std::cout <<"new"<< std::endl;
+			situation[p->getgen ()]++;
 		} //else do nothing
 		
+		if(vois.size() != 0){
+			if(vois[0] != nullptr){
+				for (std::vector< int* >::iterator it = vois.begin() ; it != vois.end(); ++it){	
+					delete[] *it;
+					*it = nullptr;
+				}
+			}
+		} 
 		vois.clear();
+		//
 	}
 
-	//delete des tableaux du vecteur
-	for (int k = 0; k<n ; k++){
-		delete gap[k];
-	}
+	 for (std::vector< int* >::iterator it = gap.begin() ; it != gap.end(); ++it){
+		delete[] *it;
+		*it = nullptr;
+	} 
+	gap.clear();
 }
 
 void Simulation::Metabolisme (){

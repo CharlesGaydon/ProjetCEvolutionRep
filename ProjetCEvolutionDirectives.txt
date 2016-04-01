@@ -67,6 +67,11 @@ Mise en place terminée d'un système d'exploration paramétrique afin de constr
 On peut choisir le nombre de simulation effectué pour chaque parametre. Si des différences occurent, ce nombre est doublé et on 
 Choisit la valeur la plus fréquente obtenue.
 
+1 avril
+Une erreur de delete oublié corrigée dans Individu. 
+Reste erreurs dans les vectors de guerreSexuelle -> faire des vector de vector :
+ plus de problème de tableau et supression par clear possible! 
+
 
 9 Mai -> EXAMEN du Code!
 

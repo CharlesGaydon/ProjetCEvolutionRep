@@ -26,12 +26,11 @@ int main(){
 	
 	//parametres
 	int NPrecision = 2; //2
-	int pasT = 5; //5
-	double pasA = 4	;	//4
+	int pasT = 250; //5
+	double pasA = 26	;	//4
 
 	vector<vector<double*>> res (NPrecision+1, vector<double*> (0));
-	cout << res[0].size() << endl;
-	double* tab = nullptr;	
+	double* tab = nullptr;
 	
 	Simulation* S; 
 
@@ -132,12 +131,13 @@ int main(){
 		
 	}
 	delete tab;
+	
 	//Ecrire les bonnes valeurs
 	stringstream s;
 	s << "pT" << pasT << "pA" << pasA << "Pres" << NPrecision<<".txt";	
 	string title = "Diagramme_" + s.str();
 	
-	ofstream f(title.c_str());
+	std::ofstream f("Diagramme.txt", std::ios::out | std::ios::trunc );
 
 	cout << "Titre du fichier a enregistrer : " << title.c_str() << endl;
 
@@ -145,7 +145,12 @@ int main(){
 		f << res[0][i][0]<<" "<<res[0][i][1]<<" "<<res[1][i][0] << endl;
 	}
 	f.close ();
-	
+	for (vector<vector<double*>>::iterator it = res.begin() ; it != res.end(); ++it){
+		for (vector<double*>::iterator it2 = (*it).begin() ; it2 != (*it).end(); ++it2){
+			delete[] *it2;
+		}
+	} 
+	res.clear();
 	
 	
 	delete etats;

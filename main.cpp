@@ -28,7 +28,8 @@ int main(){
 	int NPrecision = 2; //2
 	int pasT = 25; //5
 	double pasA = 9	;	//4
-	int maxT = 1500;
+	int maxT = 600;
+	double D = 0.1;
 
 	vector<vector<double*>> res (NPrecision+1, vector<double*> (0));
 	double* tab = nullptr;
@@ -54,7 +55,7 @@ int main(){
 		cout << "Titre du fichier a enregistrer : " <<title.c_str() << endl;	
 		for (int T = 1 ; T<=maxT ; T = T + pasT){
 			for (double A = 0 ; A <= 50 ; A = A + pasA){
-				S = new Simulation(nW,nH,T,A);
+				S = new Simulation(nW,nH,T,A,D);
 				S->Simulate ();
 				
 				f << T<<" "<<A<<" "<< S->Situation () << endl;	
@@ -125,7 +126,7 @@ int main(){
 		cout << "la" << endl;
 	//Ecrire les bonnes valeurs
 	stringstream s;
-	s << "pT" << pasT << "pA" << pasA << "Pres" << NPrecision<<".txt";	
+	s << "pT" << pasT << "pA" << pasA << "Pres" << NPrecision<<"D"<<D<<".txt";	
 	string title = "Diagramme_" + s.str();
 	
 	std::ofstream f(title.c_str(), std::ios::out | std::ios::trunc );

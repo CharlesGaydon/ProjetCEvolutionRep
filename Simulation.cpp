@@ -2,6 +2,10 @@
 #include "Individu.h"
 #include "Simulation.h"
 
+#include <sstream>
+#include <fstream>
+
+
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -138,8 +142,16 @@ Simulation::~Simulation () {
 
 
 int Simulation::Simulate (){
+	using namespace std;
 	int temps = 0;
 	this->Metabolisme ();
+	
+	int PasGraph = 1;
+	int graph = 0;
+	stringstream s;
+	s << "Etat" << ".ppm";	
+	string title = s.str();
+	
 	//TODO : lecture du fichier texte pour paramètres
 	while (poursuivre){
 
@@ -157,12 +169,22 @@ int Simulation::Simulate (){
 			//Après division, un individu ne peut se reproduire dans le même tour.
 		this->GuerreSexuelle ();
 			//Mutation aléatoire des organisme independemment les uns des autres.
-		this->Mutation ();			
+		this->Mutation ();	//OK : les divisées d'avant mutent et leur fitness est actualisée
 			//Métabolisme des individus. La FITNESS est actualisée pour tous.
 		this->Metabolisme (); //actualiser la fitness egalement, remet divide à true
 			//Affichage de la boîte de pétri
-
 		
+		//enregistrement de la boîte de Pétrie 
+		//~if (temps%PasGraph == 0){
+			//~//this->Afficher ();
+			//~s.str("");
+			//~s <<"Etat"<< graph << ".ppm"; //~/Documents/ProjetCEvolutionRep/
+			//~saveGraph(s.str());
+			//~MAP->AfficherB ();
+			//~graph++;
+		//~}
+		
+		//Arrêt conditionnel
 		temps++;
 		this->JeContinue (temps);
 		if (temps%T == 0){
@@ -188,6 +210,10 @@ void Simulation::Hecatombe (){
 					p->kill();
 					p->stopdivide ();
 					situation[p->getgen()]--;
+					
+					MAP->setA(i,j,MAP->getA(i,j) + p->getA());
+					MAP->setB(i,j,MAP->getB(i,j) + p->getB());
+					MAP->setC(i,j,MAP->getC(i,j) + p->getC());
 				}
 			}
 		}
@@ -203,7 +229,7 @@ void Simulation::Hecatombe (){
 void Simulation::GuerreSexuelle (){
 	//Parcours et enregistrement de toutes les cases vides dans un tableau 2D
 	Individu* p = nullptr;
-
+	Individu* pfille = nullptr;
 	std::vector <int*> gap = {};
 	int* tab = nullptr;
 
@@ -285,16 +311,14 @@ void Simulation::GuerreSexuelle (){
 			nf = std::rand()%vois.size();
 			ni = vois[nf][0];
 			nj = vois[nf][1];
-				
-			p = pop[ni][nj]; //tu gagne Rocco !
-			p->Dby2 (); //%2 phen, divide passé à false.
-			this->MAJfitnessij(ni,nj); //fitness act
-			std::cout <<"ok"<< gap[k][0]<< std::endl;
 			
-			delete pop[gap[k][0]][gap[k][1]];
-			std::cout <<"deleté"<< std::endl;
-			pop[gap[k][0]][gap[k][1]] = new Individu(*p); //Hump //le problème viendrait d'ici...
-			std::cout <<"new"<< std::endl;
+			p = pop[ni][nj]; //tu gagne Rocco !
+			
+			pfille = pop[gap[k][0]][gap[k][1]];
+			pfille->DB2andCopy(p); //alors pfille ressemble exactement à p et divide passé à false
+			
+			
+		
 			situation[p->getgen ()]++;
 		} //else do nothing
 		
@@ -431,6 +455,7 @@ void Simulation::MAJfitnessij (int i, int j){
 	p->setfitness((p->getphen ())[p->getgen ()]);
 	if(p->getfitness () < Wmin){
 		p->setfitness(0);
+		p->stopdivide();
 	}	
 }
 
@@ -456,8 +481,80 @@ void Simulation::Afficher (){
 		std::cout << "" << std::endl;
 	}
 	std::cout << "L'état des ressources en A est le suivant : "<< std::endl ;
-	MAP->AfficherA (); //TODO : ENLEVER APRES TESTS
+	//MAP->AfficherA (); //TODO : ENLEVER APRES TESTS
 	
+}
+
+void Simulation::saveGraph (std::string nameout){
+	
+	using namespace std;
+	cout << "On save dans "<< nameout << endl;
+	
+	Individu* p = nullptr;
+	
+	std::ofstream f(nameout, ios::out | ios::trunc | ios::binary);
+	
+	
+	f << "P6\n" << 4*W << " " << H << "\n" << 255 << "\n";
+	char a = 100;
+	char b = 100;
+	char c = 0;	
+	double ratio = 255/Ainit;
+	for (unsigned int i = 0 ; i<W ; i++){
+			
+		//Bactéries
+		for (unsigned int j = 0 ; j<H ; j++){
+			
+			p = pop[i][j];
+			
+			
+			if(!p->isalive ()){
+				a = 0;
+				b = 0;				 
+			}else if (!p->candivide ()){
+				a = 255;
+				b = 255;				
+			}else if (p->getgen ()){
+				a = 200;
+				b = 70;				
+			}else{
+				a = 70;
+				b = 200;				
+			}
+				cout << "On ecrit" << i << " " << j << endl;
+			  f.write(&a , sizeof(char));
+			  f.write(&a , sizeof(char));
+			  f.write(&b , sizeof(char));
+				
+		}
+		
+		// Show the map of Aout;
+		for(int j = 0; j < H ; j++){
+		  a = ((char) (MAP-> getA(i,j) * ratio) )%255;
+		  f.write(&a , sizeof(char));
+		  f.write(&c , sizeof(char));
+		  f.write(&c , sizeof(char));
+		}
+		
+		// Show the map of Bout;
+		for(int j = 0; j < H ; j++){
+		  a = ((char) (MAP-> getB(i,j) * ratio) )%255;
+		  f.write(&c , sizeof(char));
+		  f.write(&a , sizeof(char));
+		  f.write(&c , sizeof(char));
+		}
+		
+		// Show the map of Cout;
+		for(int j = 0; j < H ; j++){
+		  a = ((char) (MAP-> getC(i,j) * ratio) )%255;
+		  f.write(&a , sizeof(char));
+		  f.write(&a , sizeof(char));
+		  f.write(&a , sizeof(char));
+		}		
+		
+	}
+	
+	//f.close();
 }
 
 
@@ -475,7 +572,7 @@ int Simulation::Situation (){
 			situation[2] = 1; //S éteinte (plus de gen B)	
 		}
 	}else{
-		situation[2] = 0; //cohabitation. CAS genA éteint non prévu.
+		situation[2] = 0; //cohabitation. Cas genA éteint non prévu.
 	}
 	return situation[2];
 }

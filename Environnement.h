@@ -49,6 +49,8 @@ class Environnement {
 		
 		//méthodes auxiliaires
 		void AfficherA ();
+		void AfficherB ();
+
 	private:
 	
 		//constructeur non utilisable

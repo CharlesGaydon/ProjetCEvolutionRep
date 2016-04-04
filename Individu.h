@@ -30,6 +30,10 @@ class Individu {
 		inline bool candivide () const;
 		inline bool isalive () const;
 		
+		inline double getA () const;
+		inline double getB () const;
+		inline double getC () const;
+		
 		//mutateurs
 		
 		inline void setA (double nA);
@@ -43,8 +47,10 @@ class Individu {
 		inline void mutate ();
 		inline void godivide ();
 		inline void stopdivide ();
+		inline void gojesus ();
 
 		void Dby2 ();
+		void DB2andCopy (Individu* pmodel);
 		
 		//Actualisation
 		void actfitness ();
@@ -92,6 +98,18 @@ inline bool Individu::isalive (void) const{
 	return vivant;
 }
 
+inline double Individu::getA (void) const{
+	return phen[0];
+}
+
+inline double Individu::getB (void) const{
+	return phen[1];
+}
+
+inline double Individu::getC (void) const{
+	return phen[2];
+}
+
 //Definition des mutateurs inline
 
 inline void Individu::setA (double nA){
@@ -127,6 +145,10 @@ inline void Individu::mutate (){
 
 inline void Individu::godivide (){
 	divide = true;
+}
+
+inline void Individu::gojesus (){
+	vivant = true;
 }
 
 inline void Individu::stopdivide (){

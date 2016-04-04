@@ -75,7 +75,22 @@ void Individu::Dby2 (){
 	phen[0] = phen[0]/2;
 	phen[1] = phen[1]/2;
 	phen[2] = phen[2]/2;
-	divide = false;
+
+}
+void Individu::DB2andCopy (Individu* pmodel){
+	pmodel->Dby2 (); //%2
+	setA(pmodel->getA ());
+	setB(pmodel->getB ());
+	setC(pmodel->getC ());
+	setgen(pmodel->getgen ());
+	setfitness(pmodel->getfitness ());
+	
+	gojesus();
+	
+	stopdivide ();
+	pmodel->stopdivide ();
+	
+	
 }
 
 //actualisation

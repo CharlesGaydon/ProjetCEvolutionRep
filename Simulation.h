@@ -29,6 +29,7 @@ class Simulation {
 		void JeContinue (int nbCycle);
 		int Situation ();
 		void Afficher ();	
+		void saveGraph (std::string nameout);
 		void MAJparametres ();			
 		
 	protected:

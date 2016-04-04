@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+using namespace std; 
 int main(){
 
 	unsigned int nW = 32;
@@ -17,24 +18,24 @@ int main(){
 
 //Exemple de Simulation.
 
-	using namespace std; 
-	//~Simulation S = new Simulation(32,32,500,0.1);
+	//~Simulation* S = new Simulation(32,32,75,25);
 	//~S->Simulate ();
-	//~S.Afficher (); 
+	//~S->Afficher (); 
 	
 //Construction du diagramme de phase BIS
-	
+	//~
 	//parametres
 	int NPrecision = 2; //2
-	int pasT = 250; //5
-	double pasA = 26	;	//4
+	int pasT = 25; //5
+	double pasA = 9	;	//4
+	int maxT = 1500;
 
 	vector<vector<double*>> res (NPrecision+1, vector<double*> (0));
 	double* tab = nullptr;
 	
 	Simulation* S; 
 
-	for (int T = 1 ; T<=500 ; T = T + pasT){
+	for (int T = 1 ; T<=maxT ; T = T + pasT){
 		for (double A = 0 ; A <= 50 ; A = A + pasA){
 			tab = new double[2];	
 			tab[0] = T;
@@ -51,7 +52,7 @@ int main(){
 		
 		ofstream f(title.c_str());
 		cout << "Titre du fichier a enregistrer : " <<title.c_str() << endl;	
-		for (int T = 1 ; T<=500 ; T = T + pasT){
+		for (int T = 1 ; T<=maxT ; T = T + pasT){
 			for (double A = 0 ; A <= 50 ; A = A + pasA){
 				S = new Simulation(nW,nH,T,A);
 				S->Simulate ();
@@ -68,24 +69,14 @@ int main(){
 		f.close();
 	}
 	
-	
-	//penser aux delete
-	
 	//Comparer situation par situation et refaire ceux qui le nécessitent 
 	//le double de NPrecision 
-	
 
 	double state;
 	int j;
 	
 	int sit = 0;
 	int* etats = new int[3]; //-1 0 1
-	//pour créer une différence :
-	cout << "On avait : " << res[2][0][0] <<" "<< res[2][1][0]<<endl; 
-	res[1][0][0] = 0;
-
-	cout << "On a : " << res[2][0][0] <<" "<< res[2][1][0]<<endl; 
-
 	
 	for (int i = 0; i < res[1].size() ; i++){
 
@@ -94,13 +85,12 @@ int main(){
 		etats[0] = 0;
 		etats[1] = 0;
 		etats[2] = 0;		
-		cout << "On a : " << res[2][0][0] <<" "<< res[2][1][0]<<endl; 
 		while (j<NPrecision+1){
-			cout << state << " vs "<<  res[j][i][0] <<" en "<<i<<" "<<j<<endl;
+			
 			
 			if (state != res[j][i][0]){
-				cout << "différence rencontrée ! " << endl;
-				
+				cout << "Différence rencontrée :" << endl;
+				cout << state << " vs "<<  res[j][i][0] <<" en T = "<<res[1][i][0]<<" et A = "<< res[j][i][1]<<endl;
 				for(int k =0 ; k< NPrecision ; k++){
 					etats[(int) res[k+1][i][0]+1]++;
 					S = new Simulation(nW,nH,res[0][i][0],res[0][i][1]);
@@ -130,29 +120,32 @@ int main(){
 		}
 		
 	}
-	delete tab;
-	
+	cout << "ici" << endl;
+	delete[] tab;
+		cout << "la" << endl;
 	//Ecrire les bonnes valeurs
 	stringstream s;
 	s << "pT" << pasT << "pA" << pasA << "Pres" << NPrecision<<".txt";	
 	string title = "Diagramme_" + s.str();
 	
-	std::ofstream f("Diagramme.txt", std::ios::out | std::ios::trunc );
+	std::ofstream f(title.c_str(), std::ios::out | std::ios::trunc );
 
 	cout << "Titre du fichier a enregistrer : " << title.c_str() << endl;
-
-	for (int i = 0; i < res[0].size() ; i++){
-		f << res[0][i][0]<<" "<<res[0][i][1]<<" "<<res[1][i][0] << endl;
+		cout << "On a bien "<< (res[0]).size() << (res[1]).size()<< endl;
+	for (int i = 0; i < (res[0]).size() ; i++){
+		cout << "On voit : " << res[0][i][0] << res[0][i][1] <<res[1][i][0]<< endl;
+		f << res[0][i][0]<<" "<<res[0][i][1]<<" "<<res[1][i][0] << endl;	
+		cout << "la" << endl;
 	}
-	f.close ();
-	for (vector<vector<double*>>::iterator it = res.begin() ; it != res.end(); ++it){
-		for (vector<double*>::iterator it2 = (*it).begin() ; it2 != (*it).end(); ++it2){
-			delete[] *it2;
-		}
-	} 
-	res.clear();
-	
-	
-	delete etats;
+
+
+	//ERREUR
+	//~for (vector<vector<double*>>::iterator it = res.begin() ; it != res.end(); ++it){
+		//~for (vector<double*>::iterator it2 = (*it).begin() ; it2 != (*it).end(); ++it2){
+			//~delete[] *it2;
+		//~}
+	//~} 
+	//~res.clear();
+	//delete[] etats;
 	return 0;
 }

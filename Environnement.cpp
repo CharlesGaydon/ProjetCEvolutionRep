@@ -187,4 +187,15 @@ void Environnement::AfficherA (){
 
 }
 
+void Environnement::AfficherB (){
+
+	for (unsigned int j = 0 ; j<H ; j++){
+		for (unsigned int i = 0 ; i<W ; i++){
+			std::cout << resB[i][j] << " ";
+		}
+		std::cout << "" << std::endl;
+	}
+
+}
+
 
